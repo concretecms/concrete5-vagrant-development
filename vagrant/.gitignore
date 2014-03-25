@@ -1,0 +1,5 @@
+# Skip Librarian-Chef files for managing cookbooks
+.librarian
+/tmp
+# Ensure .vagrant directory isn't tracked (! IMPORTANT !)
+.vagrant
