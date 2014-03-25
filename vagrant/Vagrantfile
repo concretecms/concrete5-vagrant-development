@@ -9,63 +9,63 @@
 ############################################################################
 Vagrant.configure("2") do |config|
 
-	box_settings = {}
+  box_settings = {}
 
-	# Basic settings
-	box_settings[:concrete5] = {
-		:admin_pass		=> 'c5@dmin',
-		:db_name 			=> 'concrete5_site',
-		:db_username	=> 'root',
-		:db_password 	=> 'root',
-    :db_server    => '127.0.0.1',
-		:pretty_urls	=> true
-	}
+  # Basic settings
+  box_settings[:concrete5] = {
+      :admin_pass => 'c5@dmin',
+      :db_name => 'concrete5_site',
+      :db_username => 'root',
+      :db_password => 'root',
+      :db_server => '127.0.0.1',
+      :pretty_urls => true
+  }
 
-	# Machine config 
-	box_settings[:vm_config] = {
-		:memory_cap			=> '384',
-		:port_forwards	=> {
-			80		=> 8080, # Apache (ie, :80 in the VM -> :8080 on your machine)
-			443 	=> 4433, # SSL
-			3306	=> 3307	 # MySQL
-		}
-	}
-
-	# Misc options
-	box_settings[:auto_install_mysql_timezone_tables] = true
-
-	# Developer tools
-	box_settings[:dev_stack] = {
-    :enable     => true,
-    :opts       => {
-      :php_tools  => {
-        :xdebug   => true,
-        :phpunit  => true
-      },
-      :redis      => true,
-      :nodejs     => {
-        :install  => true,
-        :gruntjs  => true,
-        :bower    => true,
-        :auto_npm => true
-      },
-      :ruby       => {
-        :rbenv    => true,
-        :version  => '2.1.0',
-        :gems     => [ # just examples...
-          {:name => 'bundler'}, 
-          {:name => 'compass'}
-        ]
+  # Machine config
+  box_settings[:vm_config] = {
+      :memory_cap => '384',
+      :port_forwards => {
+          80 => 8080, # Apache (ie, :80 in the VM -> :8080 on your machine)
+          443 => 4433, # SSL
+          3306 => 3307 # MySQL
       }
-    }
-	}
+  }
+
+  # Misc options
+  box_settings[:auto_install_mysql_timezone_tables] = true
+
+  # Developer tools
+  box_settings[:dev_stack] = {
+      :enable => true,
+      :opts => {
+          :php_tools => {
+              :xdebug => true,
+              :phpunit => true
+          },
+          :redis => true,
+          :nodejs => {
+              :install => true,
+              :gruntjs => true,
+              :bower => true,
+              :auto_npm => true
+          },
+          :ruby => {
+              :rbenv => true,
+              :version => '2.1.0',
+              :gems => [# just examples...
+                  {:name => 'bundler'},
+                  {:name => 'compass'}
+              ]
+          }
+      }
+  }
 
 
-	##################################################################################
+  ##################################################################################
   # Remaining Vagrant config; usually don't need to do anything (but feel free)
   # since you can always rebuild it.
   ##################################################################################
-	config.vm.box 		= "precise64-pristine"
+  config.vm.box = "precise64-pristine"
   # Box URL if not already available on the system
   config.vm.box_url = "http://focus-43.com/files/1913/8670/0974/precise64-pristine.box"
   # Mount shared folder
@@ -74,18 +74,18 @@ Vagrant.configure("2") do |config|
   config.ssh.forward_agent = true
   # Port forwarding
   box_settings[:vm_config][:port_forwards].each do |_from, _to|
-		config.vm.network :forwarded_port, guest: _from, host: _to, auto_correct: true
-	end
-	# Make VirtualBox GUI display the VM name as the root project folder
-	begin
-		config.vm.provider "virtualbox" do |v|
-			v.name = File.basename(File.expand_path("../"))
-		end
-	rescue
-		$stdout.puts "Unable to rename the VM; VirtualBox will display a generic name..."
-	end
-	# Memory usage cap
-	begin
+    config.vm.network :forwarded_port, guest: _from, host: _to, auto_correct: true
+  end
+  # Make VirtualBox GUI display the VM name as the root project folder
+  begin
+    config.vm.provider "virtualbox" do |v|
+      v.name = File.basename(File.expand_path("../"))
+    end
+  rescue
+    $stdout.puts "Unable to rename the VM; VirtualBox will display a generic name..."
+  end
+  # Memory usage cap
+  begin
     config.vm.provider "virtualbox" do |v|
       v.customize ['modifyvm', :id, '--memory', box_settings[:vm_config][:memory_cap]]
     end
@@ -104,8 +104,8 @@ Vagrant.configure("2") do |config|
 
   # Chef provisioner
   config.vm.provision :chef_solo do |chef|
-  	# Default cookbooks
-  	chef.cookbooks_path = ['cookbooks', 'project_cookbooks']
+    # Default cookbooks
+    chef.cookbooks_path = ['cookbooks', 'project_cookbooks']
     chef.add_recipe 'apt'
     chef.add_recipe 'build-essential'
     chef.add_recipe 'openssl'
@@ -121,63 +121,63 @@ Vagrant.configure("2") do |config|
 
     # Standard attributes
     _attributes = {
-    	# box_settings will now be available to the custom box_setup cookbook
-    	:box_setup => box_settings,
-      # Enable $ apt-get update at compile time
-      :apt => {
-        :compiletime => true
-      },
-    	# Required for building some dependencies
-      :git => {
-        :prefix => '/usr/local'
-      },
-      # Database
-    	:mysql => {
-	      :server_root_password   => box_settings[:concrete5][:db_password], # "root",
-	      :server_repl_password   => box_settings[:concrete5][:db_password], # "root",
-	      :server_debian_password => box_settings[:concrete5][:db_password], # "root",
-	      :service_name           => "mysql",
-	      :basedir                => "/usr",
-	      :data_dir               => "/var/lib/mysql",
-	      :root_group             => "root",
-	      :mysqladmin_bin         => "/usr/bin/mysqladmin",
-	      :mysql_bin              => "/usr/bin/mysql",
-	      :conf_dir               => "/etc/mysql",
-	      :confd_dir              => "/etc/mysql/conf.d",
-	      :socket                 => "/var/run/mysqld/mysqld.sock",
-	      :pid_file               => "/var/run/mysqld/mysqld.pid",
-	      :grants_path            => "/etc/mysql/grants.sql",
-	      :bind_address           => "0.0.0.0",
-	      :allow_remote_root      => "1"
-	    },
-	    # Web server
-	    :apache => {
-	      :default_site_enabled => "false",
-	      :dir                  => "/etc/apache2",
-	      :log_dir              => "/var/log/apache2",
-	      :error_log            => "error.log",
-	      :user                 => 'vagrant',
-	      :group                => 'vagrant',
-	      :binary               => "/usr/sbin/apache2",
-	      :cache_dir            => "/var/cache/apache2",
-	      :pid_file             => "/var/run/apache2.pid",
-	      :lib_dir              => "/usr/lib/apache2",
-	      :listen_ports         => ["80", "443"],
-	      :contact              => "ops@example.com",
-	      :timeout              => "300",
-	      :keepalive            => "On",
-	      :keepaliverequests    => "100",
-	      :keepalivetimeout     => "5",
-	      :default_modules      => [
-	        'mod_mime', 
-	        'mod_expires', 
-	        'mod_php5', 
-	        'mod_rewrite', 
-	        'mod_deflate', 
-	        'mod_headers', 
-	        'mod_ssl'
-	      ]
-	    }
+        # box_settings will now be available to the custom box_setup cookbook
+        :box_setup => box_settings,
+        # Enable $ apt-get update at compile time
+        :apt => {
+            :compiletime => true
+        },
+        # Required for building some dependencies
+        :git => {
+            :prefix => '/usr/local'
+        },
+        # Database
+        :mysql => {
+            :server_root_password => box_settings[:concrete5][:db_password], # "root",
+            :server_repl_password => box_settings[:concrete5][:db_password], # "root",
+            :server_debian_password => box_settings[:concrete5][:db_password], # "root",
+            :service_name => "mysql",
+            :basedir => "/usr",
+            :data_dir => "/var/lib/mysql",
+            :root_group => "root",
+            :mysqladmin_bin => "/usr/bin/mysqladmin",
+            :mysql_bin => "/usr/bin/mysql",
+            :conf_dir => "/etc/mysql",
+            :confd_dir => "/etc/mysql/conf.d",
+            :socket => "/var/run/mysqld/mysqld.sock",
+            :pid_file => "/var/run/mysqld/mysqld.pid",
+            :grants_path => "/etc/mysql/grants.sql",
+            :bind_address => "0.0.0.0",
+            :allow_remote_root => "1"
+        },
+        # Web server
+        :apache => {
+            :default_site_enabled => "false",
+            :dir => "/etc/apache2",
+            :log_dir => "/var/log/apache2",
+            :error_log => "error.log",
+            :user => 'vagrant',
+            :group => 'vagrant',
+            :binary => "/usr/sbin/apache2",
+            :cache_dir => "/var/cache/apache2",
+            :pid_file => "/var/run/apache2.pid",
+            :lib_dir => "/usr/lib/apache2",
+            :listen_ports => ["80", "443"],
+            :contact => "ops@example.com",
+            :timeout => "300",
+            :keepalive => "On",
+            :keepaliverequests => "100",
+            :keepalivetimeout => "5",
+            :default_modules => [
+                'mod_mime',
+                'mod_expires',
+                'mod_php5',
+                'mod_rewrite',
+                'mod_deflate',
+                'mod_headers',
+                'mod_ssl'
+            ]
+        }
     }
 
 
@@ -189,14 +189,14 @@ Vagrant.configure("2") do |config|
         chef.add_recipe 'rbenv::user'
         # Add configuration to _attributes
         _attributes[:rbenv] = {
-          :user_installs => [{
-            :user   => 'vagrant',
-            :rubies => [box_settings[:dev_stack][:opts][:ruby][:version]],
-            :global => box_settings[:dev_stack][:opts][:ruby][:version],
-            :gems   => {
-               box_settings[:dev_stack][:opts][:ruby][:version] => box_settings[:dev_stack][:opts][:ruby][:gems]
-            }
-          }]
+            :user_installs => [{
+               :user => 'vagrant',
+               :rubies => [box_settings[:dev_stack][:opts][:ruby][:version]],
+               :global => box_settings[:dev_stack][:opts][:ruby][:version],
+               :gems => {
+                   box_settings[:dev_stack][:opts][:ruby][:version] => box_settings[:dev_stack][:opts][:ruby][:gems]
+               }
+           }]
         }
       end
 
@@ -205,12 +205,12 @@ Vagrant.configure("2") do |config|
         chef.add_recipe 'redis'
         # Add configuration to _attributes
         _attributes[:redis] = {
-          :bind         => "127.0.0.1",
-          :port         => "6379",
-          :config_path  => "/etc/redis/redis.conf",
-          :daemonize    => "yes",
-          :timeout      => "300",
-          :loglevel     => "notice"
+            :bind => "127.0.0.1",
+            :port => "6379",
+            :config_path => "/etc/redis/redis.conf",
+            :daemonize => "yes",
+            :timeout => "300",
+            :loglevel => "notice"
         }
       end
 
@@ -222,7 +222,7 @@ Vagrant.configure("2") do |config|
         # Add configuration to _attributes
         _attributes[:nodejs] = {
             # NPM moves quick; if NPM ever fails, update the version below then $vagrant provision
-            :npm => '1.4.6' 
+            :npm => '1.4.6'
         }
       end
     end
@@ -238,8 +238,8 @@ Vagrant.configure("2") do |config|
 
   # Install timezone tables for MySQL? Should only do if you know your production environment
   if box_settings[:auto_install_mysql_timezone_tables]
-  	# (push CLI output to dev/null to hide warnings)
-  	config.vm.provision :shell, :inline => "echo Installing MySQL timezone tables from Ubuntu zoneinfo; mysql_tzinfo_to_sql 2>/dev/null /usr/share/zoneinfo | mysql -u root --password=root mysql 2>/dev/null"
+    # (push CLI output to dev/null to hide warnings)
+    config.vm.provision :shell, :inline => "echo Installing MySQL timezone tables from Ubuntu zoneinfo; mysql_tzinfo_to_sql 2>/dev/null /usr/share/zoneinfo | mysql -u root --password=root mysql 2>/dev/null"
   end
 
 
@@ -247,14 +247,14 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell do |s|
     s.inline = "echo Installing Concrete5 via CLI tools...;"
     s.inline << "php /home/vagrant/app/cli/install-concrete5.php " << {
-      '--admin-password'  => box_settings[:concrete5][:admin_pass],
-      '--db-database'     => box_settings[:concrete5][:db_name],
-      '--db-username'     => box_settings[:concrete5][:db_username],
-      '--db-password'     => box_settings[:concrete5][:db_password],
-      '--db-server'       => box_settings[:concrete5][:db_server],
-      '--core'            => '/home/vagrant/app/web/concrete/',
-      '--target'          => '/home/vagrant/app/web/'
-    }.map{|k,v| "#{k}=#{v} "}.join(' ')
+        '--admin-password' => box_settings[:concrete5][:admin_pass],
+        '--db-database' => box_settings[:concrete5][:db_name],
+        '--db-username' => box_settings[:concrete5][:db_username],
+        '--db-password' => box_settings[:concrete5][:db_password],
+        '--db-server' => box_settings[:concrete5][:db_server],
+        '--core' => '/home/vagrant/app/web/concrete/',
+        '--target' => '/home/vagrant/app/web/'
+    }.map { |k, v| "#{k}=#{v} " }.join(' ')
   end
 
 
