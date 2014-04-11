@@ -1,0 +1,54 @@
+# ignore system files
+.DS_Store
+thumbs.db
+__MACOSX
+._*
+
+# ignore the site.php
+/web/config/site.php
+
+#ignore everything but the index.html
+/web/files/*
+!/web/files/index.html
+
+# ignore updates folder
+/web/updates/*
+
+# ignore packages folder
+/web/packages/*
+/web/concrete/packages/*
+
+# more stuff
+/web/css/*
+/web/js/*
+/web/blocks/*
+/web/languages/*
+/web/tools/*
+/web/controllers/*
+/web/single_pages/*
+/web/models/*
+
+# ignore sitemap.xml
+/web/sitemap.xml
+
+# ignore the error log and .htaccess and others
+error_log
+.htaccess
+.ftpquota
+/.idea/
+
+# ignore Aptana and Eclipse project files
+.project
+
+# ignore Eclipse-specific files
+/.settings/
+/.buildpath
+
+# ignore JavaScript source maps
+/web/concrete/js/*.js.map
+
+# ignore node modules used for building
+/build/node_modules
+/build/release
+/build/Gruntfile.parameters.js
+/build/npm-debug.log
