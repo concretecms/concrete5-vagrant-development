@@ -4,8 +4,7 @@
 Developers, primarily. Or command-line savvy designers. Especially useful for **teams** where everyone might not
 be developing on the same OS.
 
-Currently VirtualBox is the only virtualization provider supported. Future releases may include pre-built boxes
-for VMWare as well.
+Currently VirtualBox is the only virtualization provider supported. Future releases may support VMWare as well.
 
 * [Overview](#overview)
 * [Usage / Getting Started](#usage--getting-started)
@@ -21,17 +20,19 @@ By using Vagrant, you can be sure that anyone working on the project will be run
 and you can tailor the VM build to closely mimic your production environment. If you're new to Vagrant or the idea
 of working with virtual machines for development, [read this](http://www.vagrantup.com/about.html).
 
-The files included for this Vagrant build will create a development server with the following installed (ideal for
-Concrete5 development):
+Instead of having to install and configure a Concrete5 project by hand, you can just add the `vagrant` directory to your project, run `vagrant up`, and you'll have a fully sandboxed environment specifically for your project. Further, you can manage your development environment programatically via the Vagrantfile - instead of telling team members to configure this or that.
+
+The files included for this Vagrant build will create a development environment with the following installed, tailored for C5 development:
 * Ubuntu Linux 12.04 64-bit
 * Apache 2
 * PHP 5.3.10
 * MySQL 5.5
-* Redis
-* NodeJS
-* GruntJS is auto-installed
-* Xdebug
-* PHPUnit
+* Composer (optional; for use on 5.7 development currently)
+* Redis (optional)
+* NodeJS (optional)
+* GruntJS (optional)
+* Xdebug (optional)
+* PHPUnit (optional)
 
 Out of the box, you'll be able to run Grunt tasks for core asset builds, and run unit tests, with *zero configuration*.
 
@@ -40,6 +41,23 @@ Out of the box, you'll be able to run Grunt tasks for core asset builds, and run
 **Prerequisites**: Ensure Git is installed (instructions for: [OSX](http://help.pagodabox.com/customer/portal/articles/200927),
 [Windows](http://help.pagodabox.com/customer/portal/articles/202068)), as well as: [VirtualBox](https://www.virtualbox.org/), and [Vagrant](http://docs.vagrantup.com/v2/installation/).
 Installers are available for all common OSs.
+
+### Get The Vagrant Files ###
+
+With the prerequisites installed, all that's necessary is to copy the `vagrant` directory to your Concrete5 project root (ie. at the same level as the `web` directory).
+
+**Via Git** If your project is using Git for version control, you can add this repository as a remote and simply checkout the /vagrant directory:
+
+    $: cd {your-project-root}
+    $: git remote add vagrant-repo {this-repo-git-clone-url}
+    $: git fetch vagrant-repo
+    $: git checkout vagrant-repo/master -- vagrant
+
+**By Hand** Download this repo as a zip file from Github, and extract the /vagrant directory into your project root. Done.
+
+### Configuring ###
+
+With the Vagrant directory added to your project, open the extensionless file name `Vagrantfile` inside the /vagrant directory. At the top of this file, you'll see a series of hashes you can use to configure the machine. **Note:** sensible defaults have been used, and there is actually zero configuration required to run a Concrete5 site. "Configuration" refers to optional tools/settings you may want to use on any given project.
 
 From the command line, navigate to this directory (`$: cd {root}/vagrant/`) in your Concrete5 repository , then simply
 
