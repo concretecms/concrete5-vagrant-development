@@ -58,6 +58,14 @@ GIT
     redis (0.0.4)
 
 GIT
+  remote: https://github.com/escapestudios-cookbooks/composer
+  ref: 1.0.1
+  sha: f5a0840d5243b2d560710de385e429bfc3d5fe56
+  specs:
+    composer (1.0.1)
+      php (>= 0.0.0)
+
+GIT
   remote: https://github.com/fnichol/chef-rbenv
   ref: v0.7.2
   sha: f2b53292e810dd2b43f6121f9958f5f29979dcb1
@@ -96,6 +104,7 @@ DEPENDENCIES
   apache2 (>= 0)
   apt (>= 0)
   build-essential (>= 0)
+  composer (>= 0)
   database (>= 0)
   git (>= 0)
   mysql (>= 0)

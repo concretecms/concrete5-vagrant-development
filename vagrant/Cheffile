@@ -14,3 +14,4 @@ cookbook "redis", {:github=>"ctrabold/chef-redis"}
 cookbook "nodejs", {:github=>"mdxp/nodejs-cookbook"}
 cookbook "ruby_build", {:github=>"fnichol/chef-ruby_build", :ref=>"v0.8.0"}
 cookbook "rbenv", {:github=>"fnichol/chef-rbenv", :ref=>"v0.7.2"}
+cookbook "composer", {:github=>"escapestudios-cookbooks/composer", :ref=>"1.0.1"}
