@@ -34,8 +34,6 @@ The files included for this Vagrant build will create a development environment 
 * Xdebug (optional)
 * PHPUnit (optional)
 
-Out of the box, you'll be able to run Grunt tasks for core asset builds, and run unit tests, with *zero configuration*.
-
 ## Usage / Getting Started ##
 
 **Prerequisites**: Ensure Git is installed (instructions for: [OSX](http://help.pagodabox.com/customer/portal/articles/200927),
@@ -59,6 +57,12 @@ Download this repo as a zip file from Github, and extract the /vagrant directory
 
 ### Configuring ###
 
+With the Vagrant directory added to your project, open the extensionless file name `Vagrantfile` inside the /vagrant directory. At the top of this file, you'll see a series of hashes you can use to configure the build for your project. **Note:** sensible defaults have been used, and there is actually zero configuration required to run a Concrete5 site. "Configuration" refers to optional tools/settings you may want to use on any given project.
+
+#### Concrete5 Installation Settings ####
+
+Configure the admin password, whether Pretty URLs should be enabled, and optionally the MySQL database settings running within the VM. Unless you want to dig in with the machine configuration, generally only touch the admin_pass option.
+
     # Basic settings
     box_settings[:concrete5] = {
       :admin_pass => 'c5@dmin',
@@ -68,6 +72,10 @@ Download this repo as a zip file from Github, and extract the /vagrant directory
       :db_server => '127.0.0.1',
       :pretty_urls => true 
     }
+
+#### VM Configuration ####
+
+How much memory should your host machine delegate to the VM? Which ports should be forwarded? (For example, if you were to use Grunt's livereload plugin, you could port forward 54329).
 
     # Machine config
     box_settings[:vm_config] = {
@@ -79,8 +87,16 @@ Download this repo as a zip file from Github, and extract the /vagrant directory
       }
     }
 
+#### MySQL Timezone Tables ####
+
+Setup automatically? Make sure your production system matches!
+
     # Misc options
     box_settings[:auto_install_mysql_timezone_tables] = true
+
+#### Development Tools ####
+
+If you're going to hack on Concrete5 core, or you're a developer that wants to use any of the following tools for a project, you can simply enable by toggling true/false below.
 
     # Developer tools
     box_settings[:dev_stack] = {
@@ -115,7 +131,7 @@ Download this repo as a zip file from Github, and extract the /vagrant directory
       }
     }
 
-With the Vagrant directory added to your project, open the extensionless file name `Vagrantfile` inside the /vagrant directory. At the top of this file, you'll see a series of hashes you can use to configure the machine. **Note:** sensible defaults have been used, and there is actually zero configuration required to run a Concrete5 site. "Configuration" refers to optional tools/settings you may want to use on any given project.
+### Run The Machine ###
 
 From the command line, navigate to this directory (`$: cd {root}/vagrant/`) in your Concrete5 repository , then simply
 
