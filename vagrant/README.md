@@ -46,16 +46,74 @@ Installers are available for all common OSs.
 
 With the prerequisites installed, all that's necessary is to copy the `vagrant` directory to your Concrete5 project root (ie. at the same level as the `web` directory).
 
-**Via Git** If your project is using Git for version control, you can add this repository as a remote and simply checkout the /vagrant directory:
+**Via Git**
+If your project is using Git for version control, you can add this repository as a remote and simply checkout the /vagrant directory:
 
     $: cd {your-project-root}
     $: git remote add vagrant-repo {this-repo-git-clone-url}
     $: git fetch vagrant-repo
     $: git checkout vagrant-repo/master -- vagrant
 
-**By Hand** Download this repo as a zip file from Github, and extract the /vagrant directory into your project root. Done.
+**By Hand**
+Download this repo as a zip file from Github, and extract the /vagrant directory into your project root. Done.
 
 ### Configuring ###
+
+    # Basic settings
+    box_settings[:concrete5] = {
+      :admin_pass => 'c5@dmin',
+      :db_name => 'concrete5_site',
+      :db_username => 'root',
+      :db_password => 'root',
+      :db_server => '127.0.0.1',
+      :pretty_urls => true 
+    }
+
+    # Machine config
+    box_settings[:vm_config] = {
+      :memory_cap => '384',
+      :port_forwards => {
+          80 => 8080, # Apache (ie, :80 in the VM -> :8080 on your machine)
+          443 => 4433, # SSL
+          3306 => 3307 # MySQL
+      }
+    }
+
+    # Misc options
+    box_settings[:auto_install_mysql_timezone_tables] = true
+
+    # Developer tools
+    box_settings[:dev_stack] = {
+      :enable => true,
+      :opts => {
+          :composer => {
+              :install => false,
+              :auto_install_packages => true,
+              :composerjson_location => '/home/vagrant/app/web/concrete/'
+          },
+          :php_tools => {
+              :xdebug => false,
+              :phpunit => false
+          },
+          :redis => false,
+          :nodejs => {
+              :install => false,
+              :gruntjs => true,
+              :bower => true,
+              :npm => {
+                :auto_install_packages => true,
+                :package_json_location => '/home/vagrant/app/build' # defaults to ../build
+              }
+          },
+          :ruby => {
+              :rbenv => false,
+              :version => '2.1.0',
+              :gems => [
+                  {:name => 'bundler'}
+              ]
+          }
+      }
+    }
 
 With the Vagrant directory added to your project, open the extensionless file name `Vagrantfile` inside the /vagrant directory. At the top of this file, you'll see a series of hashes you can use to configure the machine. **Note:** sensible defaults have been used, and there is actually zero configuration required to run a Concrete5 site. "Configuration" refers to optional tools/settings you may want to use on any given project.
 
