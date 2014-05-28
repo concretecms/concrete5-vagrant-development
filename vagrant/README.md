@@ -102,16 +102,12 @@ If you're going to hack on Concrete5 core, or you're a developer that wants to u
     box_settings[:dev_stack] = {
       :enable => true,
       :opts => {
-          :composer => {
-              :install => false,
-              :auto_install_packages => true,
-              :composerjson_location => '/home/vagrant/app/web/concrete/'
-          },
           :php_tools => {
               :xdebug => false,
               :phpunit => false
           },
           :redis => false,
+          # If :install = false, gruntjs, bower, and npm won't be installed as they need Node
           :nodejs => {
               :install => false,
               :gruntjs => true,
@@ -121,12 +117,18 @@ If you're going to hack on Concrete5 core, or you're a developer that wants to u
                 :package_json_location => '/home/vagrant/app/build' # defaults to ../build
               }
           },
+          # If :rbenv = false, no options below will be relevant
           :ruby => {
               :rbenv => false,
               :version => '2.1.0',
               :gems => [
                   {:name => 'bundler'}
               ]
+          },
+          :composer => { # ONLY RELEVANT FOR 5.7 DEVELOPMENT!
+              :install => false,
+              :auto_install_packages => true,
+              :composerjson_location => '/home/vagrant/app/web/concrete/'
           }
       }
     }
